@@ -1,25 +1,16 @@
 package com.theojamilly.gcm.model;
 
+import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor 
+@Data
 public class Produto {
     private Integer codigo;
-    private Double preco;
+    private BigDecimal preco;
     private Integer estoque;
-
-    public Produto(){ }
-
-    public Produto( Integer codigo, Double preco, Integer estoque) {
-        this.codigo = codigo;
-        this.preco = preco;
-        this.estoque = estoque;
-    }
-
-    public Integer getCodigo() { return codigo; }
-    public void setCodigo(Integer codigo) { this.codigo = codigo; }
-
-    public Double getPreco() { return preco; }
-    public void setPreco(Double preco) { this.preco = preco; }
-
-    public Integer getEstoque() { return estoque; }
-    public void setEstoque(Integer estoque) { this.estoque = estoque; }
-
 }
