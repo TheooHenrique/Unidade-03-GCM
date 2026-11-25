@@ -20,7 +20,7 @@ public class LivrariaCli {
             switch (opcao) {
                 case 1 -> System.out.println("-> Cadastrar Produto (em breve)");
                 case 2 -> System.out.println("-> Consultar Estoque (em breve)");
-                case 3 -> System.out.println("-> Entrada de Estoque (em breve)");
+                case 3 -> opcaoEntradaEstoque();
                 case 4 -> System.out.println("-> Saída de Estoque (em breve)");
                 case 5 -> System.out.println("-> Realizar Venda (em breve)");
                 case 0 -> System.out.println("Encerrando aplicação...");
@@ -40,5 +40,31 @@ public class LivrariaCli {
         System.out.println("5 - Realizar Venda");
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
+    }
+
+    private static void opcaoEntradaEstoque() {
+        try {
+            System.out.print("Código do livro (inteiro): ");
+            int codigo = Integer.parseInt(scanner.nextLine().trim());
+
+            System.out.print("Quantidade de entrada (inteiro > 0): ");
+            int quantidade = Integer.parseInt(scanner.nextLine().trim());
+
+            String json = String.format(Locale.US, "{\"quantidade\": %d}", quantidade);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                     .uri(URI.create(BASE_URL + "/produto/" + codigo + "/entrada"))
+                     .header("Content-Type", "application/json")
+                     .PUT(HttpRequest.BodyPublishers.ofString(json))
+                     .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Status HTTP: " + response.statusCode());
+            System.out.println("Resposta: " + response.body());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Digite valores numéricos inteiros válidos.");
+        } catch (Exception e) {
+            System.out.println("Erro ao comunicar com a API: " + e.getMessage());
+        }
     }
 }
