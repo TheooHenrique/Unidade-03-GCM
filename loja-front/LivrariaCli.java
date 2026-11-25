@@ -14,6 +14,7 @@ public class LivrariaCli {
     public static void main(String[] args) {
         int opcao = -1;
 
+
         while (opcao != 0) {
             exibirMenu();
 
@@ -27,8 +28,10 @@ public class LivrariaCli {
             scanner.nextLine();
 
             switch (opcao) {
-                case 1 -> System.out.println("-> Cadastrar Produto (em breve)");
+                
+                
                 case 2 -> opcaoConsultarEstoque();
+                case 1 -> opcaoCadastrarLivro();
                 case 3 -> System.out.println("-> Entrada de Estoque (em breve)");
                 case 4 -> System.out.println("-> Saída de Estoque (em breve)");
                 case 5 -> System.out.println("-> Realizar Venda (em breve)");
@@ -51,6 +54,7 @@ public class LivrariaCli {
         System.out.print("Escolha uma opção: ");
     }
 
+
     private static void opcaoConsultarEstoque() {
         try {
             System.out.print("Código do livro (inteiro): ");
@@ -66,6 +70,32 @@ public class LivrariaCli {
             System.out.println("Resposta: " + response.body());
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite um código numérico inteiro válido.");
+        } catch (Exception e) {
+            System.out.println("Erro ao comunicar com a API: " + e.getMessage());
+        }
+    }
+
+    private static void opcaoCadastrarLivro() {
+        try {
+            System.out.print("Código do livro (inteiro): ");
+            int codigo = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("Preço do livro (ex: 59.90): ");
+            String precoStr = scanner.nextLine().trim().replace(",", ".");
+            BigDecimal preco = new BigDecimal(precoStr);
+
+            String json = String.format(Locale.US, "{\"codigo\": %d, \"preco\": %.2f}", codigo, preco);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/produto"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Status HTTP: " + response.statusCode());
+            System.out.println("Resposta: " + response.body());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Digite valores numéricos válidos.");
         } catch (Exception e) {
             System.out.println("Erro ao comunicar com a API: " + e.getMessage());
         }
