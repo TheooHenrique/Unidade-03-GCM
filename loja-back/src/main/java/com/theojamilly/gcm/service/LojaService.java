@@ -1,8 +1,11 @@
 package com.theojamilly.gcm.service;
 
-import org.springframework.stereotype.Service;
-import com.theojamilly.gcm.model.Produto;
+import com.theojamilly.gcm.exception.DadosInvalidosException;
+import com.theojamilly.gcm.exception.ProdutoJaExisteException;
+import com.theojamilly.gcm.exception.ProdutoNaoEncontradoException;
 import com.theojamilly.gcm.model.itemVenda;
+import com.theojamilly.gcm.model.Produto;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,7 +18,19 @@ public class LojaService {
     private final Map<Integer, Produto> produtos = new HashMap<>();
 
     public Produto cadastrarProduto(Integer codigo, BigDecimal preco) {
-        throw new UnsupportedOperationException("Não implementado");
+        if (codigo == null || codigo <= 0) {
+	    throw new DadosInvalidosException("O código do produto deve ser um inteiro positivo.");
+	}
+	if (preco == null || preco.compareTo(BigDecimal.ZERO) <= 0) {
+	    throw new DadosInvalidosException("O preço do produto deve ser maior que zero.");
+	}
+	if (produtos.containsKey(codigo)) {
+	    throw new ProdutoJaExisteException("Já existe um produto cadastrado com o código " + codigo + ".");
+	}
+
+	Produto novoProduto = new Produto(codigo, preco, 0);
+	produtos.put(codigo, novoProduto);
+	return novoProduto;
     }
 
     public Produto consultarEstoque(Integer codigo) {
