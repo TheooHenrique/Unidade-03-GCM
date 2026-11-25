@@ -31,7 +31,7 @@ public class LivrariaCli {
                 case 3 -> opcaoEntradaEstoque();
                 case 2 -> opcaoConsultarEstoque();
                 case 1 -> opcaoCadastrarLivro();
-                case 4 -> System.out.println("-> Saída de Estoque (em breve)");
+                case 4 -> opcaoSaidaEstoque();
                 case 5 -> System.out.println("-> Realizar Venda (em breve)");
                 case 0 -> System.out.println("Encerrando aplicação...");
                 default -> System.out.println("Opção inválida. Tente novamente.");
@@ -119,6 +119,32 @@ public class LivrariaCli {
             System.out.println("Resposta: " + response.body());
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite valores numéricos válidos.");
+        } catch (Exception e) {
+            System.out.println("Erro ao comunicar com a API: " + e.getMessage());
+        }
+    }
+
+    private static void opcaoSaidaEstoque() {
+        try {
+            System.out.print("Código do livro (inteiro): ");
+            int codigo = Integer.parseInt(scanner.nextLine().trim());
+
+            System.out.print("Quantidade de saída (inteiro > 0): ");
+            int quantidade = Integer.parseInt(scanner.nextLine().trim());
+
+            String json = String.format(Locale.US, "{\"quantidade\": %d}", quantidade);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/produto/" + codigo + "/saida"))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Status HTTP: " + response.statusCode());
+            System.out.println("Resposta: " + response.body());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Digite valores numéricos inteiros válidos.");
         } catch (Exception e) {
             System.out.println("Erro ao comunicar com a API: " + e.getMessage());
         }
