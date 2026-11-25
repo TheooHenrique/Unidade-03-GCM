@@ -1,7 +1,11 @@
 package com.theojamilly.gcm.controller;
 
+import com.theojamilly.gcm.dto.CadastrarProdutoRequest;
+import com.theojamilly.gcm.dto.ConsultarEstoqueResponse;
 import com.theojamilly.gcm.dto.EntradaEstoqueRequest;
 import com.theojamilly.gcm.dto.EntradaEstoqueResponse;
+import com.theojamilly.gcm.dto.VendaRequest;
+import com.theojamilly.gcm.dto.VendaResponse;
 import com.theojamilly.gcm.exception.DadosInvalidosException;
 import com.theojamilly.gcm.service.LojaService;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.theojamilly.gcm.dto.ConsultarEstoqueResponse;
+
 import com.theojamilly.gcm.service.LojaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.theojamilly.gcm.dto.CadastrarProdutoRequest;
+
 import com.theojamilly.gcm.exception.DadosInvalidosException;
 import com.theojamilly.gcm.model.Produto;
 import com.theojamilly.gcm.service.LojaService;
@@ -59,5 +63,14 @@ public class LojaController {
         }
         Integer novoEstoque = lojaService.entradaEstoque(codigo, request.quantidade());
         return ResponseEntity.ok(new EntradaEstoqueResponse(codigo, novoEstoque));
+    }
+
+    @PostMapping("/venda")
+    public ResponseEntity<VendaResponse> realizarVenda(@RequestBody(required = false) VendaRequest request) {
+        if (request == null) {
+            throw new DadosInvalidosException("Corpo da requisição ausente.");
+        }
+        VendaResponse response = lojaService.realizarVenda(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
