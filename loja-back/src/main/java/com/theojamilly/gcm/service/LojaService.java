@@ -3,6 +3,8 @@ package com.theojamilly.gcm.service;
 import org.springframework.stereotype.Service;
 import com.theojamilly.gcm.model.Produto;
 import com.theojamilly.gcm.model.itemVenda;
+import com.theojamilly.gcm.exception.DadosInvalidosException;
+import com.theojamilly.gcm.exception.ProdutoNaoEncontradoException;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -18,8 +20,17 @@ public class LojaService {
         throw new UnsupportedOperationException("Não implementado");
     }
 
-    public Produto consultarEstoque(Integer codigo) {
-        throw new UnsupportedOperationException("Não implementado");
+    public Integer consultarEstoque(Integer codigo) {
+        if (codigo == null || codigo <= 0) {
+            throw new DadosInvalidosException("O código do produto deve ser um inteiro positivo.");
+        }
+
+        Produto produto = produtos.get(codigo);
+        if (produto == null) {
+            throw new ProdutoNaoEncontradoException("Produto não encontrado com o código " + codigo + ".");
+        }
+
+        return produto.getEstoque();
     }
 
     public Produto entradaEstoque(Integer codigo, Integer quantidade) {
