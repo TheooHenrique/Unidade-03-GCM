@@ -75,6 +75,7 @@ public class LojaController {
         }
         VendaResponse response = lojaService.realizarVenda(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     @PutMapping("/produto/{codigo}/saida")
     public ResponseEntity<SaidaEstoqueResponse> saidaEstoque(
@@ -85,6 +86,6 @@ public class LojaController {
         }
         Integer novoEstoque = lojaService.saidaEstoque(codigo, request.quantidade());
         return ResponseEntity.ok(new SaidaEstoqueResponse(codigo, novoEstoque));
-
+        
     }
 }
