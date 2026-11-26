@@ -3,6 +3,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -32,7 +34,7 @@ public class LivrariaCli {
                 case 2 -> opcaoConsultarEstoque();
                 case 1 -> opcaoCadastrarLivro();
                 case 4 -> opcaoSaidaEstoque();
-                case 5 -> System.out.println("-> Realizar Venda (em breve)");
+                case 5 -> opcaoRealizarVenda();
                 case 0 -> System.out.println("Encerrando aplicação...");
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
@@ -119,6 +121,44 @@ public class LivrariaCli {
             System.out.println("Resposta: " + response.body());
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite valores numéricos válidos.");
+        } catch (Exception e) {
+            System.out.println("Erro ao comunicar com a API: " + e.getMessage());
+        }
+    }
+
+private static void opcaoRealizarVenda() {
+        try {
+            List<String> itensJson = new ArrayList<>();
+
+            while (true) {
+                System.out.print("Código do livro (inteiro): ");
+                int codigo = Integer.parseInt(scanner.nextLine().trim());
+
+                System.out.print("Quantidade (inteiro > 0): ");
+                int quantidade = Integer.parseInt(scanner.nextLine().trim());
+
+                itensJson.add(String.format(Locale.US, "{\"codigo\": %d, \"quantidade\": %d}", codigo, quantidade));
+
+                System.out.print("Adicionar outro item? (s/n): ");
+                String continuar = scanner.nextLine().trim();
+                if (!continuar.equalsIgnoreCase("s")) {
+                    break;
+                }
+            }
+
+            String json = "{\"itens\": [" + String.join(", ", itensJson) + "]}";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/venda"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+              .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Status HTTP: " + response.statusCode());
+            System.out.println("Resposta: " + response.body());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Digite valores numéricos inteiros válidos.");
         } catch (Exception e) {
             System.out.println("Erro ao comunicar com a API: " + e.getMessage());
         }
