@@ -6,6 +6,9 @@ import com.theojamilly.gcm.dto.EntradaEstoqueRequest;
 import com.theojamilly.gcm.dto.EntradaEstoqueResponse;
 import com.theojamilly.gcm.dto.VendaRequest;
 import com.theojamilly.gcm.dto.VendaResponse;
+import com.theojamilly.gcm.dto.SaidaEstoqueRequest;
+import com.theojamilly.gcm.dto.SaidaEstoqueResponse;
+
 import com.theojamilly.gcm.exception.DadosInvalidosException;
 import com.theojamilly.gcm.service.LojaService;
 import org.springframework.http.ResponseEntity;
@@ -72,5 +75,16 @@ public class LojaController {
         }
         VendaResponse response = lojaService.realizarVenda(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+    @PutMapping("/produto/{codigo}/saida")
+    public ResponseEntity<SaidaEstoqueResponse> saidaEstoque(
+            @PathVariable Integer codigo,
+            @RequestBody(required = false) SaidaEstoqueRequest request) {
+        if (request == null) {
+            throw new DadosInvalidosException("Corpo da requisição ausente.");
+        }
+        Integer novoEstoque = lojaService.saidaEstoque(codigo, request.quantidade());
+        return ResponseEntity.ok(new SaidaEstoqueResponse(codigo, novoEstoque));
+
     }
 }

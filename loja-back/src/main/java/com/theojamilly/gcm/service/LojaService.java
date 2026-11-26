@@ -75,8 +75,25 @@ public class LojaService {
         return novoEstoque;
     }
 
-    public Produto saidaEstoque(Integer codigo, Integer quantidade) {
-        throw new UnsupportedOperationException("Não implementado");
+    public Integer saidaEstoque(Integer codigo, Integer quantidade) {
+        if (codigo == null || codigo <= 0) {
+            throw new DadosInvalidosException("O código do produto deve ser um inteiro positivo.");
+        }
+        if (quantidade == null || quantidade <= 0) {
+            throw new DadosInvalidosException("A quantidade de saída deve ser um inteiro positivo.");
+        }
+
+        Produto produto = produtos.get(codigo);
+        if (produto == null) {
+            throw new ProdutoNaoEncontradoException("Produto não encontrado com o código " + codigo + ".");
+        }
+        if (produto.getEstoque() < quantidade) {
+            throw new DadosInvalidosException("Estoque insuficiente para o produto " + codigo + ".");
+        }
+
+        int novoEstoque = produto.getEstoque() - quantidade;
+        produto.setEstoque(novoEstoque);
+        return novoEstoque;
     }
 
     public Map<String, Object> realizarVenda(List<itemVenda> itens) {
