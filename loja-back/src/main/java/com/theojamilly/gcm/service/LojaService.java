@@ -8,8 +8,6 @@ import com.theojamilly.gcm.exception.DadosInvalidosException;
 import com.theojamilly.gcm.exception.ProdutoJaExisteException;
 import com.theojamilly.gcm.exception.ProdutoNaoEncontradoException;
 import com.theojamilly.gcm.model.itemVenda;
-import com.theojamilly.gcm.exception.DadosInvalidosException;
-import com.theojamilly.gcm.exception.ProdutoNaoEncontradoException;
 
 import com.theojamilly.gcm.model.Produto;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Service
 public class LojaService {
@@ -86,9 +83,6 @@ public class LojaService {
         Produto produto = produtos.get(codigo);
         if (produto == null) {
             throw new ProdutoNaoEncontradoException("Produto não encontrado com o código " + codigo + ".");
-        }
-        if (produto.getEstoque() < quantidade) {
-            throw new DadosInvalidosException("Estoque insuficiente para o produto " + codigo + ".");
         }
 
         int novoEstoque = produto.getEstoque() - quantidade;
