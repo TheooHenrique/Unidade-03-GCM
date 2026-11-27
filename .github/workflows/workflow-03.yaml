@@ -1,0 +1,34 @@
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+
+permissions:
+  contents: write
+
+jobs:
+  criar-tag:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'feature/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH_LIMPA="${GITHUB_HEAD_REF#feature/}"
+          TAG_NAME="build-${BRANCH_LIMPA}"
+
+          echo "Gerando tag: $TAG_NAME no commit $(git rev-parse HEAD)"
+          git tag -f "$TAG_NAME"
+
+          echo "Pushando a tag ..."
+          git push origin "$TAG_NAME" -f
+          echo "A tag já foi para o repositório remoto!"
