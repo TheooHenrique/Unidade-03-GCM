@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - "feature/**"
+
+jobs:
+  resolver-dependencias:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./loja-back
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache-dependency-path: loja-back/pom.xml
+          cache: 'maven'
+
+      - name: Resolver dependências
+        run: ./mvnw dependency:resolve
+
+      - name: Compilando projeto
+        run: ./mvnw clean compile
